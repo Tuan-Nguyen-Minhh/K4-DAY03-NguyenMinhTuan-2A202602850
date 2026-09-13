@@ -38,25 +38,36 @@ class MockOfflineProvider(BaseLLMProvider):
         prompt_lower = prompt.lower()
         
         # Mô phỏng nhận diện intent gọi Tool
-        if "sv2026001" in prompt_lower and "đặt lịch" in prompt_lower:
+        if "đặt lịch" in prompt_lower:
             return {
                 "type": "tool_call",
-                "tool_name": "schedule_appointment",
-                "arguments": {"student_id": "SV2026001", "datetime_str": "14:00 15/09/2026", "advisor_name": "PGS.TS Nguyễn Văn A"},
-                "thought": "Người dùng yêu cầu đặt lịch hẹn tư vấn cho sinh viên SV2026001. Tôi sẽ gọi tool schedule_appointment."
+                "tool_name": "schedule_interview",
+                "arguments": {
+                    "candidate_id": "UV2026001",
+                    "datetime_str": "14:00 20/09/2026",
+                    "interviewer": "Trưởng phòng Tuyển dụng"
+                },
+                "thought": "Người dùng yêu cầu đặt lịch phỏng vấn cho ứng viên UV2026001. Tôi sẽ gọi tool schedule_interview."
             }
-        elif "sv2026001" in prompt_lower or "tra cứu" in prompt_lower:
+        elif "uv9999999" in prompt_lower:
             return {
                 "type": "tool_call",
-                "tool_name": "academic_query",
-                "arguments": {"student_id": "SV2026001"},
-                "thought": "Người dùng muốn tra cứu thông tin học vụ của sinh viên SV2026001. Tôi sẽ gọi tool academic_query."
+                "tool_name": "candidate_query",
+                "arguments": {"candidate_id": "UV9999999"},
+                "thought": "Người dùng muốn tra cứu thông tin ứng viên UV9999999. Tôi sẽ gọi tool candidate_query."
+            }
+        elif "uv2026001" in prompt_lower or "tra cứu" in prompt_lower or "ứng viên" in prompt_lower:
+            return {
+                "type": "tool_call",
+                "tool_name": "candidate_query",
+                "arguments": {"candidate_id": "UV2026001"},
+                "thought": "Người dùng muốn tra cứu thông tin hồ sơ của ứng viên UV2026001. Tôi sẽ gọi tool candidate_query."
             }
         else:
             return {
                 "type": "text",
-                "content": f"[Mock Agent Response]: Xin chào! Quy chế học vụ VinUni yêu cầu sinh viên tích lũy tối thiểu 120 tín chỉ và duy trì GPA trên 2.0 để tốt nghiệp.",
-                "thought": "Câu hỏi chung về quy chế học vụ, trả lời trực tiếp không cần gọi Tool."
+                "content": "[Mock Agent Response]: Quy trình tuyển dụng của công ty gồm 3 vòng: Vòng 1 Sàng lọc CV, Vòng 2 Phỏng vấn Kỹ thuật, Vòng 3 Phỏng vấn Văn hóa và Thỏa thuận chế độ đãi ngộ.",
+                "thought": "Câu hỏi chung về quy trình tuyển dụng, trả lời trực tiếp không cần gọi Tool."
             }
 
 
@@ -136,17 +147,22 @@ class GeminiProvider(BaseLLMProvider):
 
 
 class OpenAIProvider(BaseLLMProvider):
-    """OpenAI Provider (Native Tool Calling với OpenAI SDK)"""
-    def __init__(self, api_key: str = None, model: str = None):
-        self.api_key = api_key or os.getenv("OPENAI_API_KEY")
-        self.model_name = model or os.getenv("LLM_MODEL") or "gpt-4o-mini"
+    """OpenAI / OpenRouter Provider (Native Tool Calling với OpenAI SDK)"""
+    def __init__(self, api_key: str = None, model: str = None, base_url: str = None):
+        raw_key = api_key or os.getenv("OPENAI_API_KEY") or ""
+        self.api_key = raw_key.strip().strip('"').strip("'")
+        self.base_url = base_url or os.getenv("OPENAI_BASE_URL")
+        # Tự động nhận diện OpenRouter khi key bắt đầu bằng 'sk-or-v1-'
+        if not self.base_url and self.api_key.startswith("sk-or-v1-"):
+            self.base_url = "https://openrouter.ai/api/v1"
+        self.model_name = model or os.getenv("LLM_MODEL") or "openai/gpt-4o-mini"
 
     def generate(self, prompt: str, system_prompt: str = "") -> str:
         if not self.api_key or self.api_key == "your_openai_api_key_here":
             return "[OpenAI Error]: Chưa cấu hình OPENAI_API_KEY trong file .env! Đang sử dụng chế độ Mock."
         try:
             from openai import OpenAI
-            client = OpenAI(api_key=self.api_key)
+            client = OpenAI(api_key=self.api_key, base_url=self.base_url)
             messages = []
             if system_prompt:
                 messages.append({"role": "system", "content": system_prompt})
@@ -163,7 +179,7 @@ class OpenAIProvider(BaseLLMProvider):
 
         try:
             from openai import OpenAI
-            client = OpenAI(api_key=self.api_key)
+            client = OpenAI(api_key=self.api_key, base_url=self.base_url)
 
             tools = []
             for tool in tools_schema:
@@ -221,7 +237,7 @@ def get_llm_provider() -> BaseLLMProvider:
             return GeminiProvider()
         else:
             return MockOfflineProvider()
-    elif provider_type == "openai":
+    elif provider_type in ["openai", "openrouter"]:
         key = os.getenv("OPENAI_API_KEY")
         if key and key != "your_openai_api_key_here":
             return OpenAIProvider()

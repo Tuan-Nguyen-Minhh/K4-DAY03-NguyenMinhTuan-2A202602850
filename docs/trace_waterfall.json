@@ -1,29 +1,60 @@
 [
   {
     "step": 1,
-    "query": "Chào bạn, bạn có thể giới thiệu quy chế học vụ cơ bản của Đại học VinUni không?",
-    "action_type": "FINAL_ANSWER",
-    "thought": "Câu hỏi chung về quy chế học vụ, trả lời trực tiếp không cần gọi Tool.",
-    "output": "[Mock Agent Response]: Xin chào! Quy chế học vụ VinUni yêu cầu sinh viên tích lũy tối thiểu 120 tín chỉ và duy trì GPA trên 2.0 để tốt nghiệp.",
-    "latency_ms": 2845.93
-  },
-  {
-    "step": 1,
-    "query": "Hãy tra cứu thông tin học vụ của sinh viên SV2026001.",
+    "query": "Hãy kiểm tra thông tin hồ sơ của ứng viên UV2026001 xem người phụ trách phỏng vấn chuyên môn là ai, sau đó đặt lịch phỏng vấn với người đó vào lúc 09:30 ngày 22/09/2026 giúp tôi.",
     "action_type": "TOOL_EXECUTION",
-    "tool_name": "academic_query",
+    "tool_name": "candidate_query",
     "arguments": {
-      "student_id": "SV2026001"
+      "candidate_id": "UV2026001"
     },
-    "observation": {},
-    "latency_ms": 799.12
+    "observation": {
+      "status": "SUCCESS",
+      "candidate_id": "UV2026001",
+      "data": {
+        "full_name": "Nguyễn Văn An",
+        "applied_role": "Kỹ sư AI / Machine Learning",
+        "experience_years": 3,
+        "skills": [
+          "Python",
+          "PyTorch",
+          "LLM",
+          "MCP"
+        ],
+        "email": "an.nguyen@example.com",
+        "screening_status": "ĐẠT - Đủ điều kiện phỏng vấn chuyên môn",
+        "assigned_interviewer": "Trưởng phòng Kỹ thuật"
+      }
+    },
+    "latency_ms": 4886.07
   },
   {
     "step": 2,
-    "query": "Hãy tra cứu thông tin học vụ của sinh viên SV2026001.",
+    "query": "Hãy kiểm tra thông tin hồ sơ của ứng viên UV2026001 xem người phụ trách phỏng vấn chuyên môn là ai, sau đó đặt lịch phỏng vấn với người đó vào lúc 09:30 ngày 22/09/2026 giúp tôi.",
+    "action_type": "TOOL_EXECUTION",
+    "tool_name": "schedule_interview",
+    "arguments": {
+      "round": "Phỏng vấn chuyên môn",
+      "interviewer": "Trưởng phòng Kỹ thuật",
+      "candidate_id": "UV2026001",
+      "datetime_str": "09:30 22/09/2026"
+    },
+    "observation": {
+      "status": "SUCCESS",
+      "booking_id": "INT-UV2026001-2026",
+      "candidate_id": "UV2026001",
+      "datetime": "09:30 22/09/2026",
+      "interviewer": "Trưởng phòng Kỹ thuật",
+      "round": "Phỏng vấn chuyên môn",
+      "message": "Đã đặt lịch phỏng vấn thành công cho ứng viên UV2026001 vào lúc 09:30 22/09/2026 với Trưởng phòng Kỹ thuật (Phỏng vấn chuyên môn). Thông báo đã được gửi đến ứng viên."
+    },
+    "latency_ms": 4388.66
+  },
+  {
+    "step": 3,
+    "query": "Hãy kiểm tra thông tin hồ sơ của ứng viên UV2026001 xem người phụ trách phỏng vấn chuyên môn là ai, sau đó đặt lịch phỏng vấn với người đó vào lúc 09:30 ngày 22/09/2026 giúp tôi.",
     "action_type": "FINAL_ANSWER",
-    "thought": "Tổng hợp kết quả từ MCP Server thành công.",
-    "output": "Chưa thể trả lời chi tiết do chưa nhận được dữ liệu từ MCP Server (hãy hoàn thành TODO 2.1).",
-    "latency_ms": 10.0
+    "thought": "Gemini phản hồi trực tiếp bằng văn bản (không cần gọi công cụ).",
+    "output": "Dựa trên thông tin tra cứu và kết quả thực hiện từ hệ thống, tôi xin gửi đến bạn báo cáo chi tiết như sau:\n\n1. **Thông tin ứng viên & Người phụ trách phỏng vấn:**\n   * **Ứng viên:** Nguyễn Văn An (Mã định danh: `UV2026001`)\n   * **Vị trí ứng tuyển:** Kỹ sư AI / Machine Learning\n   * **Người phụ trách phỏng vấn chuyên môn:** **Trưởng phòng Kỹ thuật**\n\n2. **Kết quả đặt lịch phỏng vấn:**\n   * **Thời gian:** 09:30 ngày 22/09/2026\n   * **Người phỏng vấn:** Trưởng phòng Kỹ thuật\n   * **Vòng phỏng vấn:** Phỏng vấn chuyên môn\n   * **Mã lịch hẹn (Booking ID):** `INT-UV2026001-2026`\n   * **Trạng thái:** **Thành công**. Hệ thống đã tự động gửi thông báo lịch hẹn chi tiết đến email của ứng viên Nguyễn Văn An (`an.nguyen@example.com`).",
+    "latency_ms": 4616.61
   }
 ]

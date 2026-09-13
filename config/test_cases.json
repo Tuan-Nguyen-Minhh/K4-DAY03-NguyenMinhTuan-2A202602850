@@ -1,0 +1,37 @@
+[
+  {
+    "id": "TC01",
+    "type": "direct_query",
+    "question": "Chào bạn, bạn có thể giới thiệu quy trình tuyển dụng và các vòng phỏng vấn cơ bản của công ty không?",
+    "expected_behavior": "Chatbot trả lời trực tiếp từ System Prompt, không cần gọi bất kỳ Tool nào.",
+    "complexity": "Low"
+  },
+  {
+    "id": "TC02",
+    "type": "single_tool_query",
+    "question": "Hãy tra cứu thông tin hồ sơ và kết quả sàng lọc CV của ứng viên UV2026001.",
+    "expected_behavior": "Agent nhận diện nhu cầu tra cứu, tự động phát sinh Tool Call tra cứu thông tin ứng viên với mã UV2026001.",
+    "complexity": "Medium"
+  },
+  {
+    "id": "TC03",
+    "type": "appointment_booking",
+    "question": "Ứng viên UV2026001 đã đạt vòng duyệt hồ sơ. Hãy đặt lịch phỏng vấn vòng 1 cho ứng viên này vào lúc 14:00 ngày 20/09/2026 với người phỏng vấn là Trưởng phòng Tuyển dụng.",
+    "expected_behavior": "Agent tự động phát sinh Tool Call đặt lịch phỏng vấn với đúng thời gian, mã ứng viên và người phỏng vấn.",
+    "complexity": "Medium"
+  },
+  {
+    "id": "TC04",
+    "type": "multi_step_reasoning",
+    "question": "Hãy kiểm tra thông tin hồ sơ của ứng viên UV2026001 xem người phụ trách phỏng vấn chuyên môn là ai, sau đó đặt lịch phỏng vấn với người đó vào lúc 09:30 ngày 22/09/2026 giúp tôi.",
+    "expected_behavior": "Agent thực hiện chuỗi suy luận ReAct: Tra cứu hồ sơ ứng viên để tìm người phỏng vấn phụ trách trước, sau đó tiến hành đặt lịch phỏng vấn.",
+    "complexity": "High"
+  },
+  {
+    "id": "TC05",
+    "type": "edge_case_handling",
+    "question": "Hãy tra cứu hồ sơ và trạng thái sàng lọc CV của ứng viên có mã UV9999999.",
+    "expected_behavior": "Agent nhận kết quả NOT_FOUND từ Tool và đưa ra phản hồi lịch sự, chính xác không bịa đặt dữ liệu.",
+    "complexity": "Medium"
+  }
+]
